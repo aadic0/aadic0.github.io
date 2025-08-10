@@ -1,0 +1,4 @@
+Hi, I'm Aadi.
+Systems/DB internals (C++), embedded, XR.
+I lowkey dont like web dev.
+Try: ls, cd Projects, vi Blog/hello-terminal.md, or help.
