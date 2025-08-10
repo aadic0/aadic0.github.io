@@ -387,7 +387,7 @@
     pass('md link', /<a href="https:\/\/a\.com"/.test(html));
 
     // 6) binary checker
-    pass('binary detect .pdf', isBinaryByExt('Resume.pdf') === true);
+    pass('binary detect', isBinaryByExt('Resume.pdf') === true);
 
     // Print
     printLine('<strong>Running tests…</strong>');
