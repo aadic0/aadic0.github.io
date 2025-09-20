@@ -136,7 +136,7 @@
     if(!base){ newInputLine(); return; }
     switch(base){
       case 'help':
-        printBlock(`Available commands:\n  ls                List items\n  cd <dir>          Change directory (.. & absolute names supported)\n  vi <file>         View file content (Markdown supported)\n  clear             Clear the screen\n  open <file|url>   Open first URL in the file or a given URL\n  pwd               Print working directory\n  test              Run built-in checks`);
+        case 'help':printBlock(`Available commands:\n  ls                List items\n  cd &lt;dir&gt;          Change directory (.. & absolute names supported)\n  vi &lt;file&gt;         View file content (Markdown supported)\n  clear             Clear the screen\n  open &lt;file|url&gt;   Open first URL in the file or a given URL\n  pwd               Print working directory\n  test              Run built-in checks`);break;
         break;
       case 'ls': printLine(list(state.cwd.at(-1))); break;
       case 'pwd': printLine(getCwdPath()); break;
