@@ -5,4 +5,3 @@ Problems:
 
 - Vi is broken out the wazoo
 - Open command should open links that begin with www
-- help command doesnt format the output properly

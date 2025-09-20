@@ -184,15 +184,51 @@
   }
 
   // vi pager (Markdown-aware)
+  // async function openVi(arg){
+  //   if(!arg){ printLine(`<span class="error">vi: file name required</span>`); newInputLine(); return; }
+
+  //   // Resolve path: default relative; absolute only for ~/ or /
+  //   let startStack = [...state.cwd];
+  //   let pathArg = arg.trim();
+  //   if (pathArg.startsWith('~/') || pathArg.startsWith('/')) {
+  //       startStack = [FS];
+  //       pathArg = pathArg.replace(/^~?\//,'');
+  //   }
+
+  //   const parts = pathArg.split('/').filter(Boolean);
+  //   const resolved = resolvePathTokensFrom(startStack, parts);
+  //   const node = resolved.ok ? resolved.stack.at(-1) : null;
+
+  //   if(!node){ printLine(`<span class="error">vi: ${arg}: No such file</span>`); newInputLine(); return; }
+  //   if(node.type==='dir'){ printLine(`<span class="error">vi: ${arg}: Is a directory</span>`); newInputLine(); return; }
+
+  //   let content=''; let isMarkdown=false;
+  //   if(node.href && !isBinaryByExt(node.name)){
+  //     try {
+  //       const res = await fetch(node.href);
+  //       content = await res.text();
+  //       isMarkdown = /\.md$/i.test(node.name) || /markdown|md/.test(res.headers.get('content-type')||'');
+  //     } catch {
+  //       content = `Failed to load ${node.href}`;
+  //     }
+  //   } else {
+  //     // For binaries (e.g., .pdf) or files without href, just display a link or inline text
+  //     content = node.content || (node.href ? `Open link: ${node.href}` : '');
+  //     isMarkdown = /\.md$/i.test(node.name);
+  //   }
+
+  //   state.mode='vi'; state.vi.buffer = { name: node.name, raw: content, isMarkdown };
+  //   renderVi();
+  // }
   async function openVi(arg){
     if(!arg){ printLine(`<span class="error">vi: file name required</span>`); newInputLine(); return; }
 
-    // Resolve path: default relative; absolute only for ~/ or /
+    // Resolve path: relative by default; absolute only for ~/ or /
     let startStack = [...state.cwd];
     let pathArg = arg.trim();
     if (pathArg.startsWith('~/') || pathArg.startsWith('/')) {
-        startStack = [FS];
-        pathArg = pathArg.replace(/^~?\//,'');
+      startStack = [FS];
+      pathArg = pathArg.replace(/^~?\//,'');
     }
 
     const parts = pathArg.split('/').filter(Boolean);
@@ -202,25 +238,10 @@
     if(!node){ printLine(`<span class="error">vi: ${arg}: No such file</span>`); newInputLine(); return; }
     if(node.type==='dir'){ printLine(`<span class="error">vi: ${arg}: Is a directory</span>`); newInputLine(); return; }
 
-    let content=''; let isMarkdown=false;
-    if(node.href && !isBinaryByExt(node.name)){
-      try {
-        const res = await fetch(node.href);
-        content = await res.text();
-        isMarkdown = /\.md$/i.test(node.name) || /markdown|md/.test(res.headers.get('content-type')||'');
-      } catch {
-        content = `Failed to load ${node.href}`;
-      }
-    } else {
-      // For binaries (e.g., .pdf) or files without href, just display a link or inline text
-      content = node.content || (node.href ? `Open link: ${node.href}` : '');
-      isMarkdown = /\.md$/i.test(node.name);
-    }
-
-    state.mode='vi'; state.vi.buffer = { name: node.name, raw: content, isMarkdown };
-    renderVi();
+    // Compute an absolute, ~-less path for the viewer page
+    const abs = resolved.stack.map(n => n.name).slice(1).join('/'); // e.g., "Home/welcome.txt"
+    location.href = `vi.html?p=${encodeURIComponent(abs)}`;
   }
-
 
   function mdToHtml(md){
     // very tiny markdown renderer (headings, code, bold/italic, links, lists)
