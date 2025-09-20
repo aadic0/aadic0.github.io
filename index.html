@@ -46,6 +46,7 @@
     .path{color:var(--ansi-blue)}
     .caret{display:inline-block; width:9px; height:1.2em; translate:0 .18em; background:var(--text); animation:blink 1s steps(1,end) infinite}
     #input[contenteditable]{caret-color:transparent;} #input[contenteditable]:focus{outline:none;}
+    #vi-cmd[contenteditable]{caret-color:transparent;} #vi-cmd[contenteditable]:focus{outline:none;}
     @keyframes blink{50%{opacity:0}}
     .dir{color:var(--dir); font-weight:700}
     .file{color:var(--file)}
@@ -65,7 +66,7 @@
     <div class="window" role="region" aria-label="Terminal Portfolio">
       <div class="titlebar">
         <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-        <span class="title">Terminal — SerenityOS style</span>
+        <span class="title">Terminal — Linux style</span>
       </div>
       <div class="screen" id="screen" aria-live="polite" aria-atomic="false"></div>
     </div>
@@ -101,7 +102,7 @@
   };
 
   const screen = document.getElementById('screen');
-  window.addEventListener('focus', ()=> { if(state.mode==='shell') focusLatestInput(); });
+  window.addEventListener('focus',()=>{if(state.mode==='shell')focusLatestInput();});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state.mode==='shell')focusLatestInput();});screen.addEventListener('mousedown',()=>{if(state.mode==='shell')focusLatestInput();});
   document.addEventListener('visibilitychange', ()=> { if(!document.hidden && state.mode==='shell') focusLatestInput(); });
   screen.addEventListener('mousedown', (e)=> { if(state.mode==='shell') focusLatestInput(); });
 
@@ -409,20 +410,22 @@
     // 6) binary checker
     pass('binary detect', isBinaryByExt('Resume.pdf') === true);
 
+    // 7) focus checkers
+    pass('isPrintableKey true', isPrintableKey({key:'a', ctrlKey:false, metaKey:false, altKey:false}) === true);
+    pass('isPrintableKey false', isPrintableKey({key:'ArrowLeft', ctrlKey:false, metaKey:false, altKey:false}) === false);
+
+
     // Printing
     printLine('<strong>Running tests…</strong>');
     results.forEach((r,i)=> printLine(`${r.ok? '✅':'❌'} Test ${i+1}: ${r.name}${r.detail? ' — '+r.detail:''}`));
     const oks = results.filter(r=>r.ok).length;
     printLine(`<strong>${oks}/${results.length} passed</strong>`);
-    pass('isPrintableKey true', isPrintableKey({key:'a', ctrlKey:false, metaKey:false, altKey:false}) === true);
-    pass('isPrintableKey false', isPrintableKey({key:'ArrowLeft', ctrlKey:false, metaKey:false, altKey:false}) === false);
-
 
   }
 
   // boot
   function boot(){
-    printLine(`Aadi Terminal Web v0.2 — SerenityOS style`);
+    printLine(`Aadi Terminal Web Portfolio v0.2`);
     printLine(`Type 'help' to get started.`);
     const hash=decodeURIComponent(location.hash.slice(1));
     if(hash){ const parts=hash.split('/').filter(Boolean); const resolved=resolvePathTokensFrom([FS],parts); if(resolved.ok && resolved.stack.at(-1).type==='dir'){ state.cwd=resolved.stack; } }
